@@ -70,6 +70,16 @@ function Library:CreateWindow(titleText)
         LoaderStroke.Thickness = 1
         LoaderStroke.Transparency = 0.7
         LoaderStroke.Parent = LoaderFrame
+        local LoaderGradient = Instance.new("UIGradient")
+        LoaderGradient.Color = ColorSequence.new(Color3.fromRGB(255,255,255))
+        LoaderGradient.Transparency = NumberSequence.new{
+            NumberSequenceKeypoint.new(0, 0.65),
+            NumberSequenceKeypoint.new(0.5, 0.8),
+            NumberSequenceKeypoint.new(1, 0.9)
+        }
+        LoaderGradient.Rotation = 90
+        LoaderGradient.Parent = LoaderFrame
+
 
         -- Logo (rounded square)
         local Logo = Instance.new("ImageLabel")
@@ -120,7 +130,7 @@ function Library:CreateWindow(titleText)
         BarBG.Name = "BarBG"
         BarBG.Size = UDim2.new(1, -40, 0, 8)
         BarBG.Position = UDim2.new(0, 20, 0, 124)
-        BarBG.BackgroundColor3 = Color3.fromRGB(235, 235, 235)
+        BarBG.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
         BarBG.BorderSizePixel = 0
         BarBG.Parent = LoaderFrame
 
@@ -173,6 +183,15 @@ function Library:CreateWindow(titleText)
         MainStroke.Thickness = 1
         MainStroke.Transparency = 1
         MainStroke.Parent = MainFrame
+        local MainGradient = Instance.new("UIGradient")
+        MainGradient.Color = ColorSequence.new(Color3.fromRGB(255,255,255))
+        MainGradient.Transparency = NumberSequence.new{
+            NumberSequenceKeypoint.new(0, 0.7),
+            NumberSequenceKeypoint.new(1, 0.85)
+        }
+        MainGradient.Rotation = 90
+        MainGradient.Parent = MainFrame
+
 
         -- [[ TOP BAR ]] --
         local TopBar = Instance.new("Frame")
@@ -219,10 +238,10 @@ function Library:CreateWindow(titleText)
                 
                 if isVisible then
                         MainFrame.Visible = true
-                        Tween(MainFrame, {Size = originalSize, Position = originalPosition, BackgroundTransparency = 0.2}, 0.4, Enum.EasingStyle.Back)
+                        Tween(MainFrame, {Size = originalSize, Position = originalPosition, BackgroundTransparency = 0.18}, 0.4, Enum.EasingStyle.Back)
                         Tween(MainStroke, {Transparency = 0.5}, 0.4)
-                        Tween(TopBar, {BackgroundTransparency = 0.15}, 0.4)
-                        Tween(TopBarCover, {BackgroundTransparency = 0.15}, 0.4)
+                        Tween(TopBar, {BackgroundTransparency = 0.1}, 0.4)
+                        Tween(TopBarCover, {BackgroundTransparency = 0.1}, 0.4)
                         Tween(Title, {TextTransparency = 0}, 0.4)
                 else
                         Tween(MainFrame, {Size = UDim2.new(0, originalSize.X.Offset * 0.8, 0, originalSize.Y.Offset * 0.8), BackgroundTransparency = 1}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
@@ -280,6 +299,16 @@ function Library:CreateWindow(titleText)
                 LoaderCorner.CornerRadius = UDim.new(0, 16)
                 task.wait(0.4)
                 Tween(Logo, {ImageTransparency = 0})
+                -- Logo breathing animation
+                task.spawn(function()
+                    while LoaderFrame.Parent do
+                        Tween(Logo, {Size = UDim2.new(0, 60, 0, 60)}, 0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+                        task.wait(0.8)
+                        Tween(Logo, {Size = UDim2.new(0, 56, 0, 56)}, 0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+                        task.wait(0.8)
+                    end
+                end)
+
                 Tween(LogoStroke, {Transparency = 0.7})
                 Tween(LoaderTitle, {TextTransparency = 0})
                 Tween(Subtitle, {TextTransparency = 0})
@@ -306,9 +335,9 @@ function Library:CreateWindow(titleText)
                 
                 -- NOW load the main UI after loader finishes
                 MainFrame.Visible = true
-                Tween(MainFrame, {BackgroundTransparency = 0.2})
-                Tween(TopBar, {BackgroundTransparency = 0.15})
-                Tween(TopBarCover, {BackgroundTransparency = 0.15})
+                Tween(MainFrame, {BackgroundTransparency = 0.18})
+                Tween(TopBar, {BackgroundTransparency = 0.1})
+                Tween(TopBarCover, {BackgroundTransparency = 0.1})
                 Tween(MainStroke, {Transparency = 0.5})
                 Tween(Title, {TextTransparency = 0})
                 
@@ -353,7 +382,7 @@ function Library:CreateWindow(titleText)
                 TabBtn.Name = tabName.."_Tab"
                 TabBtn.Size = UDim2.new(1, -10, 0, 30)
                 TabBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                TabBtn.BackgroundTransparency = 0.75
+                TabBtn.BackgroundTransparency = 0.95
                 TabBtn.Text = "  " .. tabName
                 TabBtn.TextColor3 = Color3.fromRGB(100, 100, 100)
                 TabBtn.Font = Enum.Font.GothamMedium
@@ -364,6 +393,21 @@ function Library:CreateWindow(titleText)
                 local TabBtnCorner = Instance.new("UICorner")
                 TabBtnCorner.CornerRadius = UDim.new(0, 6)
                 TabBtnCorner.Parent = TabBtn
+                TabBtn.MouseEnter:Connect(function()
+                        if not ContentScroll.Visible then
+                                Tween(TabBtn, {BackgroundTransparency = 0.6, Size = UDim2.new(1, -8, 0, 31)})
+                        else
+                                Tween(TabBtn, {Size = UDim2.new(1, -8, 0, 31)})
+                        end
+                end)
+                
+                TabBtn.MouseLeave:Connect(function()
+                        if not ContentScroll.Visible then
+                                Tween(TabBtn, {BackgroundTransparency = 0.75, Size = UDim2.new(1, -10, 0, 30)})
+                        else
+                                Tween(TabBtn, {Size = UDim2.new(1, -10, 0, 30)})
+                        end
+                end)
 
                 local ContentScroll = Instance.new("ScrollingFrame")
                 ContentScroll.Name = tabName.."_Content"
@@ -383,30 +427,20 @@ function Library:CreateWindow(titleText)
 
                 table.insert(tabsData, {Btn = TabBtn, Content = ContentScroll})
 
-                TabBtn.MouseEnter:Connect(function()
-                        if not ContentScroll.Visible then
-                                Tween(TabBtn, {BackgroundTransparency = 0.6})
-                        end
-                end)
-                
-                TabBtn.MouseLeave:Connect(function()
-                        if not ContentScroll.Visible then
-                                Tween(TabBtn, {BackgroundTransparency = 0.75})
-                        end
-                end)
+                -- Enhanced hover handled above
                 
                 TabBtn.MouseButton1Click:Connect(function()
                         for _, data in ipairs(tabsData) do
                                 data.Content.Visible = false
-                                Tween(data.Btn, {BackgroundTransparency = 0.75, TextColor3 = Color3.fromRGB(100, 100, 100)})
+                                Tween(data.Btn, {BackgroundTransparency = 0.95, TextColor3 = Color3.fromRGB(180, 180, 180)})
                         end
                         ContentScroll.Visible = true
-                        Tween(TabBtn, {BackgroundTransparency = 0.5, TextColor3 = Color3.fromRGB(30, 30, 30)})
+                        Tween(TabBtn, {BackgroundTransparency = 0.8, TextColor3 = Color3.fromRGB(255, 255, 255)})
                 end)
 
                 if #tabsData == 1 then
                         ContentScroll.Visible = true
-                        TabBtn.BackgroundTransparency = 0.5
+                        TabBtn.BackgroundTransparency = 0.8
                         TabBtn.TextColor3 = Color3.fromRGB(30, 30, 30)
                 end
 
@@ -418,7 +452,7 @@ function Library:CreateWindow(titleText)
                         SectionFrame.Size = UDim2.new(1, -10, 0, 0)
                         SectionFrame.AutomaticSize = Enum.AutomaticSize.Y
                         SectionFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                        SectionFrame.BackgroundTransparency = 0.25
+                        SectionFrame.BackgroundTransparency = 0.22
                         SectionFrame.BorderSizePixel = 0
                         SectionFrame.Parent = ContentScroll
 
@@ -431,11 +465,20 @@ function Library:CreateWindow(titleText)
                         SectionStroke.Thickness = 1
                         SectionStroke.Transparency = 0.88
                         SectionStroke.Parent = SectionFrame
+                        local SectionGradient = Instance.new("UIGradient")
+                        SectionGradient.Color = ColorSequence.new(Color3.fromRGB(255,255,255))
+                        SectionGradient.Transparency = NumberSequence.new{
+                            NumberSequenceKeypoint.new(0, 0.75),
+                            NumberSequenceKeypoint.new(1, 0.88)
+                        }
+                        SectionGradient.Rotation = 90
+                        SectionGradient.Parent = SectionFrame
+
 
                         local Header = Instance.new("Frame")
                         Header.Size = UDim2.new(1, 0, 0, 26)
                         Header.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                        Header.BackgroundTransparency = 0.2
+                        Header.BackgroundTransparency = 0.15
                         Header.BorderSizePixel = 0
                         Header.Parent = SectionFrame
 
@@ -447,7 +490,7 @@ function Library:CreateWindow(titleText)
                         HeaderFix.Size = UDim2.new(1, 0, 0, 8)
                         HeaderFix.Position = UDim2.new(0, 0, 1, -8)
                         HeaderFix.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                        HeaderFix.BackgroundTransparency = 0.2
+                        HeaderFix.BackgroundTransparency = 0.15
                         HeaderFix.BorderSizePixel = 0
                         HeaderFix.Parent = Header
 
@@ -525,7 +568,7 @@ function Library:CreateWindow(titleText)
                                 local Knob = Instance.new("Frame")
                                 Knob.Size = UDim2.new(0, 16, 0, 16)
                                 Knob.Position = UDim2.new(0, 2, 0.5, -8)
-                                Knob.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
+                                Knob.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
                                 Knob.Parent = Switch
 
                                 local KnobCorner = Instance.new("UICorner")
@@ -540,7 +583,7 @@ function Library:CreateWindow(titleText)
 
                                 local function update()
                                         if state then
-                                                Tween(Switch, {BackgroundColor3 = Color3.fromRGB(240, 240, 240)})
+                                                Tween(Switch, {BackgroundColor3 = Color3.fromRGB(245, 245, 245)})
                                                 Tween(Knob, {Position = UDim2.new(1, -18, 0.5, -8), BackgroundColor3 = Color3.fromRGB(255, 255, 255)})
                                         else
                                                 Tween(Switch, {BackgroundColor3 = Color3.fromRGB(220, 220, 220)})
@@ -752,7 +795,7 @@ function Library:CreateWindow(titleText)
                                 TextBox.BackgroundTransparency = 1
                                 TextBox.Text = tostring(default)
                                 TextBox.PlaceholderText = "0"
-                                TextBox.PlaceholderColor3 = Color3.fromRGB(140, 140, 140)
+                                TextBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
                                 TextBox.TextColor3 = Color3.fromRGB(35, 35, 35)
                                 TextBox.Font = Enum.Font.GothamMedium
                                 TextBox.TextSize = 13
@@ -813,6 +856,14 @@ function SectionObj:NewButton(buttonText, buttonInfo, callback)
                                 local BtnCorner = Instance.new("UICorner")
                                 BtnCorner.CornerRadius = UDim.new(0, 6)
                                 BtnCorner.Parent = Btn
+
+                                
+                                Btn.MouseEnter:Connect(function()
+                                    Tween(Btn, {BackgroundTransparency = 0.1, Size = UDim2.new(0, 52, 0, 26)})
+                                end)
+                                Btn.MouseLeave:Connect(function()
+                                    Tween(Btn, {BackgroundTransparency = 0, Size = UDim2.new(0, 50, 0, 24)})
+                                end)
 
                                 Btn.MouseButton1Click:Connect(callback)
                         end
