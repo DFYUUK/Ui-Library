@@ -656,10 +656,10 @@ function Library:CreateWindow(titleText)
                                 ValueLabel.Size = UDim2.new(0, 80, 0, 16)
                                 ValueLabel.Position = UDim2.new(1, -90, 0, 2)
                                 ValueLabel.BackgroundTransparency = 1
-                                ValueLabel.Text = tostring(value)
+                                ValueLabel.Text = "[" .. tostring(math.floor(value * 100) / 100) .. "]"
                                 ValueLabel.TextColor3 = Color3.fromRGB(0, 137, 123)
-                                ValueLabel.Font = Enum.Font.GothamMedium
-                                ValueLabel.TextSize = 12
+                                ValueLabel.Font = Enum.Font.GothamSemibold
+                                ValueLabel.TextSize = 11
                                 ValueLabel.TextXAlignment = Enum.TextXAlignment.Right
                                 ValueLabel.Parent = SliderContainer
 
@@ -694,7 +694,7 @@ function Library:CreateWindow(titleText)
                                 local function updateSlider()
                                         local percentage = (value - min) / (max - min)
                                         SliderFill.Size = UDim2.new(percentage, 0, 1, 0)
-                                        ValueLabel.Text = tostring(math.floor(value * 100) / 100)
+                                        ValueLabel.Text = "[" .. tostring(math.floor(value * 100) / 100) .. "]"
                                         callback(value)
                                 end
 
@@ -727,24 +727,24 @@ function Library:CreateWindow(titleText)
                                 local value = default or 0
                                 
                                 local NumberBoxContainer = Instance.new("Frame")
-                                NumberBoxContainer.Size = UDim2.new(1, 0, 0, 40)
+                                NumberBoxContainer.Size = UDim2.new(1, 0, 0, 45)
                                 NumberBoxContainer.BackgroundTransparency = 1
                                 NumberBoxContainer.Parent = Inner
 
                                 local Title = Instance.new("TextLabel")
-                                Title.Size = UDim2.new(1, -120, 0, 18)
+                                Title.Size = UDim2.new(1, -140, 0, 16)
                                 Title.Position = UDim2.new(0, 10, 0, 2)
                                 Title.BackgroundTransparency = 1
                                 Title.Text = boxText
                                 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-                                Title.Font = Enum.Font.GothamMedium
+                                Title.Font = Enum.Font.GothamSemibold
                                 Title.TextSize = 13
                                 Title.TextXAlignment = Enum.TextXAlignment.Left
                                 Title.Parent = NumberBoxContainer
 
                                 local Info = Instance.new("TextLabel")
-                                Info.Size = UDim2.new(1, -120, 0, 14)
-                                Info.Position = UDim2.new(0, 10, 0, 20)
+                                Info.Size = UDim2.new(1, -140, 0, 12)
+                                Info.Position = UDim2.new(0, 10, 0, 18)
                                 Info.BackgroundTransparency = 1
                                 Info.Text = boxInfo or ""
                                 Info.TextColor3 = Color3.fromRGB(150, 150, 150)
@@ -753,39 +753,81 @@ function Library:CreateWindow(titleText)
                                 Info.TextXAlignment = Enum.TextXAlignment.Left
                                 Info.Parent = NumberBoxContainer
 
+                                -- Background frame for better visual appeal
+                                local InputFrame = Instance.new("Frame")
+                                InputFrame.Size = UDim2.new(0, 120, 0, 28)
+                                InputFrame.Position = UDim2.new(1, -130, 0.5, -14)
+                                InputFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                                InputFrame.BackgroundTransparency = 0.2
+                                InputFrame.BorderSizePixel = 0
+                                InputFrame.Parent = NumberBoxContainer
+
+                                local InputFrameCorner = Instance.new("UICorner")
+                                InputFrameCorner.CornerRadius = UDim.new(0, 8)
+                                InputFrameCorner.Parent = InputFrame
+
+                                local InputFrameStroke = Instance.new("UIStroke")
+                                InputFrameStroke.Color = Color3.fromRGB(60, 60, 60)
+                                InputFrameStroke.Thickness = 1
+                                InputFrameStroke.Transparency = 0.7
+                                InputFrameStroke.Parent = InputFrame
+
                                 local NumberBox = Instance.new("TextBox")
-                                NumberBox.Size = UDim2.new(0, 100, 0, 24)
-                                NumberBox.Position = UDim2.new(1, -110, 0.5, -12)
-                                NumberBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                                NumberBox.Size = UDim2.new(1, -10, 1, -6)
+                                NumberBox.Position = UDim2.new(0, 5, 0, 3)
+                                NumberBox.BackgroundTransparency = 1
                                 NumberBox.BorderSizePixel = 0
                                 NumberBox.Text = tostring(value)
                                 NumberBox.TextColor3 = Color3.fromRGB(255, 255, 255)
                                 NumberBox.Font = Enum.Font.GothamMedium
                                 NumberBox.TextSize = 12
                                 NumberBox.PlaceholderText = "0"
-                                NumberBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
-                                NumberBox.Parent = NumberBoxContainer
+                                NumberBox.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
+                                NumberBox.TextTruncate = Enum.TextTruncate.AtEnd
+                                NumberBox.ClipsDescendants = true
+                                NumberBox.Parent = InputFrame
 
-                                local NumberBoxCorner = Instance.new("UICorner")
-                                NumberBoxCorner.CornerRadius = UDim.new(0, 6)
-                                NumberBoxCorner.Parent = NumberBox
+                                -- Add subtle inner shadow effect
+                                local InnerShadow = Instance.new("Frame")
+                                InnerShadow.Size = UDim2.new(1, -2, 1, -2)
+                                InnerShadow.Position = UDim2.new(0, 1, 0, 1)
+                                InnerShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                                InnerShadow.BackgroundTransparency = 0.9
+                                InnerShadow.BorderSizePixel = 0
+                                InnerShadow.ZIndex = NumberBox.ZIndex - 1
+                                InnerShadow.Parent = InputFrame
 
-                                local NumberBoxStroke = Instance.new("UIStroke")
-                                NumberBoxStroke.Color = Color3.fromRGB(80, 80, 80)
-                                NumberBoxStroke.Thickness = 1
-                                NumberBoxStroke.Transparency = 0.5
-                                NumberBoxStroke.Parent = NumberBox
+                                local InnerShadowCorner = Instance.new("UICorner")
+                                InnerShadowCorner.CornerRadius = UDim.new(0, 7)
+                                InnerShadowCorner.Parent = InnerShadow
+
+                                local function formatNumber(num)
+                                        if num >= 1000000 then
+                                                return string.format("%.2fM", num / 1000000)
+                                        elseif num >= 1000 then
+                                                return string.format("%.2fK", num / 1000)
+                                        else
+                                                return tostring(math.floor(num * 100) / 100)
+                                        end
+                                end
 
                                 local function updateValue()
                                         local numValue = tonumber(NumberBox.Text)
                                         if numValue then
                                                 value = numValue
                                                 callback(value)
-                                                NumberBoxStroke.Color = Color3.fromRGB(0, 137, 123)
-                                                NumberBoxStroke.Transparency = 0.3
+                                                InputFrameStroke.Color = Color3.fromRGB(0, 137, 123)
+                                                InputFrameStroke.Transparency = 0.4
+                                                InnerShadow.BackgroundTransparency = 0.95
+                                                
+                                                -- Format display if number is too long
+                                                if #NumberBox.Text > 8 then
+                                                        NumberBox.Text = formatNumber(numValue)
+                                                end
                                         else
-                                                NumberBoxStroke.Color = Color3.fromRGB(255, 100, 100)
-                                                NumberBoxStroke.Transparency = 0.3
+                                                InputFrameStroke.Color = Color3.fromRGB(255, 100, 100)
+                                                InputFrameStroke.Transparency = 0.4
+                                                InnerShadow.BackgroundTransparency = 0.85
                                         end
                                 end
 
@@ -794,14 +836,31 @@ function Library:CreateWindow(titleText)
                                 end)
 
                                 NumberBox.MouseEnter:Connect(function()
-                                        NumberBoxStroke.Color = Color3.fromRGB(0, 137, 123)
-                                        NumberBoxStroke.Transparency = 0.2
+                                        InputFrameStroke.Color = Color3.fromRGB(0, 137, 123)
+                                        InputFrameStroke.Transparency = 0.3
+                                        InputFrame.BackgroundTransparency = 0.1
+                                        Tween(InputFrame, {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}, 0.2)
                                 end)
 
                                 NumberBox.MouseLeave:Connect(function()
                                         if tonumber(NumberBox.Text) then
-                                                NumberBoxStroke.Color = Color3.fromRGB(80, 80, 80)
-                                                NumberBoxStroke.Transparency = 0.5
+                                                InputFrameStroke.Color = Color3.fromRGB(60, 60, 60)
+                                                InputFrameStroke.Transparency = 0.7
+                                                InputFrame.BackgroundTransparency = 0.2
+                                                Tween(InputFrame, {BackgroundColor3 = Color3.fromRGB(25, 25, 25)}, 0.2)
+                                        end
+                                end)
+
+                                NumberBox.Focused:Connect(function()
+                                        InputFrameStroke.Color = Color3.fromRGB(0, 137, 123)
+                                        InputFrameStroke.Transparency = 0.2
+                                        InputFrame.BackgroundTransparency = 0.05
+                                end)
+
+                                NumberBox.FocusLost:Connect(function()
+                                        if not tonumber(NumberBox.Text) then
+                                                InputFrameStroke.Color = Color3.fromRGB(255, 100, 100)
+                                                InputFrameStroke.Transparency = 0.4
                                         end
                                 end)
 
