@@ -202,6 +202,31 @@ end
 	Title.TextTransparency = 1
 	Title.Parent = TopBar
 	
+	-- ===== LOADER ANIMATION =====
+	local percentage = 0
+	local function animateLoader()
+		for i = 0, 100 do
+			percentage = i
+			LoaderFrame.Size = UDim2.new(0, 200 + i * 2, 0, 160 + i * 0.5)
+			LoaderFrame.BackgroundTransparency = 0.4 - (i * 0.004)
+			Logo.ImageTransparency = 1 - (i * 0.01)
+			LogoStroke.Transparency = 1 - (i * 0.01)
+			LoaderTitle.TextTransparency = 1 - (i * 0.01)
+			Percentage.Text = i .. "%"
+			Percentage.TextTransparency = 1 - (i * 0.01)
+			BarFill.Size = UDim2.new(i / 100, 0, 1, 0)
+			Subtitle.TextTransparency = 1 - (i * 0.01)
+			task.wait(0.01)
+		end
+		task.wait(0.5)
+		Tween(LoaderFrame, {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}, 0.3)
+		task.wait(0.3)
+		LoaderFrame.Visible = false
+		setVisible(true)
+	end
+	
+	task.spawn(animateLoader)
+	
 	local isVisible = false
 	local originalSize = UDim2.new(0, 550, 0, 380)
 	local originalPosition = UDim2.new(0.5, 0, 0.5, 0)
@@ -263,8 +288,18 @@ end
 	ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 	ScrollingFrame.Parent = MainFrame
 
-	local TabFolder = Instance.new("Folder")
+	local TabFolder = Instance.new("Frame")
+	TabFolder.Name = "TabFolder"
+	TabFolder.Size = UDim2.new(1,0,0,0)
+	TabFolder.BackgroundTransparency = 1
 	TabFolder.Parent = ScrollingFrame
+	local TabFolderLayout = Instance.new("UIListLayout")
+	TabFolderLayout.Padding = UDim.new(0,5)
+	TabFolderLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	TabFolderLayout.Parent = TabFolder
+	TabFolderLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		ScrollingFrame.CanvasSize = UDim2.new(0,0,0, TabFolderLayout.AbsoluteContentSize.Y + 20)
+	end)
 	
 	Window.TabFolder = TabFolder
 	Window.ScrollingFrame = ScrollingFrame
@@ -273,7 +308,7 @@ end
 		local TabObj = {}
 		local Tab = Instance.new("Frame")
 		Tab.Name = tabName
-		Tab.Size = UDim2.new(1, 0, 0, 0)
+		Tab.Size = UDim2.new(1,0,0,0)
 		Tab.BackgroundTransparency = 1
 		Tab.LayoutOrder = #TabFolder:GetChildren() + 1
 		Tab.Parent = TabFolder
@@ -281,14 +316,12 @@ end
 		local UIListLayout = Instance.new("UIListLayout")
 		UIListLayout.FillDirection = Enum.FillDirection.Vertical
 		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		UIListLayout.Padding = UDim.new(0, 5)
+		UIListLayout.Padding = UDim.new(0,5)
 		UIListLayout.Parent = Tab
-		
-		local function UpdateCanvasSize()
-			ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 20)
-		end
-		
-		UIListLayout.Changed:Connect(UpdateCanvasSize)
+		-- Auto-size tab
+		UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function() 
+			Tab.Size = UDim2.new(1,0,0, UIListLayout.AbsoluteContentSize.Y) 
+		end)
 		
 		function TabObj:NewSection(sectionName)
 			local SectionObj = {}
@@ -322,8 +355,7 @@ end
 			ContentLayout.Parent = SectionContent
 			
 			ContentLayout.Changed:Connect(function()
-				Section.Size = UDim2.new(1, -20, 0, 20 + ContentLayout.AbsoluteContentSize.Y + ContentLayout.Padding.Offset * #SectionContent:GetChildren())
-				UpdateCanvasSize()
+				Section.Size = UDim2.new(1, -20, 0, 20 + ContentLayout.AbsoluteContentSize.Y)
 			end)
 			
 			function SectionObj:NewToggle(toggleText, toggleInfo, callback)
