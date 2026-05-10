@@ -3,8 +3,9 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local ContentProvider = game:GetService("ContentProvider")
+local Workspace = game:GetService("Workspace")
 
-local parentLocation = Players.LocalPlayer:WaitForChild("PlayerGui")
+local parentLocation = Players.LocalPlayer and Players.LocalPlayer:WaitForChild("PlayerGui", 5)
 local Library = {}
 local LOGO_ASSET = "rbxassetid://100968456165945"
 
@@ -24,7 +25,11 @@ function Library:CreateWindow(titleText)
 	local Window = {}
 	local ScreenGui = Instance.new("ScreenGui")
 	ScreenGui.Name = "EliteGlassUI"
-	ScreenGui.Parent = parentLocation
+	if parentLocation then
+		ScreenGui.Parent = parentLocation
+	else
+		print("[UI Library] Could not find PlayerGui")
+	end
 	ScreenGui.ResetOnSpawn = false
 	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 	ScreenGui.DisplayOrder = 999999999
@@ -32,14 +37,18 @@ function Library:CreateWindow(titleText)
 	local UIScale = Instance.new("UIScale")
 	UIScale.Parent = ScreenGui
 	local function updateScale()
-		local viewport = workspace.CurrentCamera.ViewportSize
+	if Workspace and Workspace.CurrentCamera then
+		local viewport = Workspace.CurrentCamera.ViewportSize
 		local scaleY = viewport.Y / 1080
 		local scaleX = viewport.X / 1920
 		local scale = math.min(scaleX, scaleY)
-		UIScale.Scale = math.clamp(scale, 0.5, 1)
+		if UIScale then UIScale.Scale = math.clamp(scale, 0.5, 1) end
 	end
+end
 	updateScale()
-	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
+if Workspace and Workspace.CurrentCamera then
+	Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
+end
 	local LoaderFrame = Instance.new("Frame")
 	LoaderFrame.Name = "Loader"
 	LoaderFrame.Size = UDim2.new(0, 0, 0, 0)
@@ -230,7 +239,11 @@ function Library:CreateWindow(titleText)
 	MobileToggle.Image = LOGO_ASSET
 	MobileToggle.ScaleType = Enum.ScaleType.Crop
 	MobileToggle.BorderSizePixel = 0
+	if parentLocation then
 	MobileToggle.Parent = parentLocation
+else
+	print("[UI Library] Could not create mobile toggle")
+end
 	
 	local MobileToggleCorner = Instance.new("UICorner")
 	MobileToggleCorner.CornerRadius = UDim.new(0, 8)
