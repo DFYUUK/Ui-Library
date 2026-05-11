@@ -531,12 +531,14 @@ local function setVisible(visible)
 
                         function SectionObj:CreateLabel(labelText, labelInfo)
                                 local LabelContainer = Instance.new("Frame")
-                                LabelContainer.Size = UDim2.new(1, 0, 0, 30)
+                                LabelContainer.Size = UDim2.new(1, 0, 0, 0)
+                                LabelContainer.AutomaticSize = Enum.AutomaticSize.Y
                                 LabelContainer.BackgroundTransparency = 1
                                 LabelContainer.Parent = Inner
 
                                 local Title = Instance.new("TextLabel")
-                                Title.Size = UDim2.new(1, -20, 0, 16)
+                                Title.Size = UDim2.new(1, -20, 0, 0)
+                                Title.AutomaticSize = Enum.AutomaticSize.Y
                                 Title.Position = UDim2.new(0, 10, 0, 2)
                                 Title.BackgroundTransparency = 1
                                 Title.Text = labelText
@@ -544,17 +546,20 @@ local function setVisible(visible)
                                 Title.Font = Enum.Font.GothamMedium
                                 Title.TextSize = 13
                                 Title.TextXAlignment = Enum.TextXAlignment.Left
+                                Title.TextWrapped = true
                                 Title.Parent = LabelContainer
 
                                 local Info = Instance.new("TextLabel")
-                                Info.Size = UDim2.new(1, -20, 0, 12)
-                                Info.Position = UDim2.new(0, 10, 0, 18)
+                                Info.Size = UDim2.new(1, -20, 0, 0)
+                                Info.AutomaticSize = Enum.AutomaticSize.Y
+                                Info.Position = UDim2.new(0, 10, 0, Title.Position.Y.Offset + Title.AbsoluteSize.Y + 4)
                                 Info.BackgroundTransparency = 1
                                 Info.Text = labelInfo or ""
                                 Info.TextColor3 = Color3.fromRGB(150, 150, 150)
                                 Info.Font = Enum.Font.Gotham
                                 Info.TextSize = 11
                                 Info.TextXAlignment = Enum.TextXAlignment.Left
+                                Info.TextWrapped = true
                                 Info.Parent = LabelContainer
                         end
 
@@ -690,23 +695,7 @@ local function setVisible(visible)
                                 FillCorner.CornerRadius = UDim.new(1, 0)
                                 FillCorner.Parent = SliderFill
 
-                                -- Original white thumb design
-                                local SliderThumb = Instance.new("Frame")
-                                SliderThumb.Size = UDim2.new(0, 18, 0, 18)
-                                SliderThumb.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                                SliderThumb.BorderSizePixel = 0
-                                SliderThumb.Parent = SliderTrack
-
-                                local ThumbCorner = Instance.new("UICorner")
-                                ThumbCorner.CornerRadius = UDim.new(1, 0)
-                                ThumbCorner.Parent = SliderThumb
-
-                                local ThumbStroke = Instance.new("UIStroke")
-                                ThumbStroke.Color = Color3.fromRGB(0, 137, 123)
-                                ThumbStroke.Thickness = 2
-                                ThumbStroke.Transparency = 0.3
-                                ThumbStroke.Parent = SliderThumb
-
+                                
                                 -- Invisible hitbox
                                 local SliderButton = Instance.new("TextButton")
                                 SliderButton.Size = UDim2.new(1, -20, 0, 20)
@@ -717,31 +706,22 @@ local function setVisible(visible)
 
                                 local function updateSlider(animate)
                                         local percentage = (value - min) / (max - min)
-                                        local fillWidth = percentage * SliderTrack.AbsoluteSize.X
-                                        local thumbRadius = 9
-                                        local maxThumbPosition = SliderTrack.AbsoluteSize.X - thumbRadius
-                                        local handlePosition = math.max(thumbRadius, math.min(fillWidth, maxThumbPosition)) - thumbRadius
                                         
                                         if animate then
                                                 Tween(SliderFill, {Size = UDim2.new(percentage, 0, 1, 0)}, 0.15)
-                                                Tween(SliderThumb, {Position = UDim2.new(0, handlePosition, 0.5, -9)}, 0.15)
                                         else
                                                 SliderFill.Size = UDim2.new(percentage, 0, 1, 0)
-                                                SliderThumb.Position = UDim2.new(0, handlePosition, 0.5, -9)
                                         end
                                         
                                         ValueLabel.Text = tostring(math.floor(value))
                                         
-                                        -- Visual feedback
+                                        -- Visual feedback for track only
                                         if isDragging then
-                                                Tween(SliderThumb, {BackgroundColor3 = Color3.fromRGB(0, 137, 123)}, 0.1)
-                                                Tween(ThumbStroke, {Transparency = 0}, 0.1)
+                                                Tween(SliderTrack, {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}, 0.1)
                                         elseif isHovering then
-                                                Tween(SliderThumb, {BackgroundColor3 = Color3.fromRGB(240, 240, 240)}, 0.1)
-                                                Tween(ThumbStroke, {Transparency = 0.2}, 0.1)
+                                                Tween(SliderTrack, {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}, 0.1)
                                         else
-                                                Tween(SliderThumb, {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}, 0.1)
-                                                Tween(ThumbStroke, {Transparency = 0.3}, 0.1)
+                                                Tween(SliderTrack, {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}, 0.1)
                                         end
                                         
                                         callback(value)
