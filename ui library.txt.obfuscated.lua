@@ -204,53 +204,12 @@ function Library:CreateWindow(titleText)
         
         MainFrame.Size = originalSize
         
-        -- Background blur effect
-local BlurFrame = Instance.new("Frame")
-BlurFrame.Name = "BackgroundBlur"
-BlurFrame.Size = UDim2.new(1, 0, 1, 0)
-BlurFrame.Position = UDim2.new(0, 0, 0, 0)
-BlurFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-BlurFrame.BackgroundTransparency = 0.3
-BlurFrame.BorderSizePixel = 0
-BlurFrame.ZIndex = 999998
-BlurFrame.Visible = false
-BlurFrame.Parent = ScreenGui
-
-local BlurEffect = Instance.new("ImageLabel")
-BlurEffect.Name = "BlurEffect"
-BlurEffect.Size = UDim2.new(1, 0, 1, 0)
-BlurEffect.Position = UDim2.new(0, 0, 0, 0)
-BlurEffect.BackgroundTransparency = 1
-BlurEffect.Image = "rbxasset://textures/ui/Controls/lock.png"
-BlurEffect.ImageColor3 = Color3.fromRGB(0, 0, 0)
-BlurEffect.ImageTransparency = 0.7
-BlurEffect.ScaleType = Enum.ScaleType.Slice
-BlurEffect.SliceCenter = Rect.new(16, 16, 240, 240)
-BlurEffect.SliceScale = 0.5
-BlurEffect.ZIndex = 999999
-BlurEffect.Visible = false
-BlurEffect.Parent = BlurFrame
-
-local function setBlur(enabled)
-        BlurFrame.Visible = enabled
-        BlurEffect.Visible = enabled
         
-        if enabled then
-                Tween(BlurFrame, {BackgroundTransparency = 0.3}, 0.3)
-                Tween(BlurEffect, {ImageTransparency = 0.7}, 0.3)
-        else
-                Tween(BlurFrame, {BackgroundTransparency = 1}, 0.2)
-                Tween(BlurEffect, {ImageTransparency = 1}, 0.2)
-                task.wait(0.2)
-        end
-end
-
 local function setVisible(visible)
                 if isVisible == visible then return end
                 isVisible = visible
                 
                 if isVisible then
-                        setBlur(true)
                         MainFrame.Visible = true
                         Tween(MainFrame, {Size = originalSize, Position = originalPosition, BackgroundTransparency = 0.4}, 0.4, Enum.EasingStyle.Back)
                         Tween(MainStroke, {Transparency = 0.5}, 0.4)
@@ -258,7 +217,6 @@ local function setVisible(visible)
                         Tween(TopBarCover, {BackgroundTransparency = 0.2}, 0.4)
                         Tween(Title, {TextTransparency = 0}, 0.4)
                 else
-                        setBlur(false)
                         Tween(MainFrame, {Size = UDim2.new(0, originalSize.X.Offset * 0.8, 0, originalSize.Y.Offset * 0.8), BackgroundTransparency = 1}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
                         Tween(MainStroke, {Transparency = 1}, 0.3)
                         Tween(TopBar, {BackgroundTransparency = 1}, 0.3)
@@ -734,8 +692,8 @@ local function setVisible(visible)
 
                                 -- Modern thumb matching image style
                                 local SliderThumb = Instance.new("Frame")
-                                SliderThumb.Size = UDim2.new(0, 16, 0, 16)
-                                SliderThumb.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+                                SliderThumb.Size = UDim2.new(0, 14, 0, 14)
+                                SliderThumb.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                                 SliderThumb.BorderSizePixel = 0
                                 SliderThumb.Parent = SliderTrack
 
@@ -743,23 +701,23 @@ local function setVisible(visible)
                                 ThumbCorner.CornerRadius = UDim.new(1, 0)
                                 ThumbCorner.Parent = SliderThumb
 
-                                -- White outer ring
+                                -- White outer ring with better rendering
                                 local ThumbOuter = Instance.new("Frame")
-                                ThumbOuter.Size = UDim2.new(1, 4, 1, 4)
-                                ThumbOuter.Position = UDim2.new(0, -2, 0, -2)
+                                ThumbOuter.Size = UDim2.new(0, 18, 0, 18)
+                                ThumbOuter.Position = UDim2.new(0.5, -9, 0.5, -9)
                                 ThumbOuter.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                                ThumbOuter.BackgroundTransparency = 0.1
+                                ThumbOuter.BackgroundTransparency = 0
                                 ThumbOuter.BorderSizePixel = 0
-                                ThumbOuter.Parent = SliderThumb
+                                ThumbOuter.Parent = SliderTrack
 
                                 local OuterCorner = Instance.new("UICorner")
                                 OuterCorner.CornerRadius = UDim.new(1, 0)
                                 OuterCorner.Parent = ThumbOuter
 
                                 local OuterStroke = Instance.new("UIStroke")
-                                OuterStroke.Color = Color3.fromRGB(200, 200, 200)
-                                OuterStroke.Thickness = 1
-                                OuterStroke.Transparency = 0.3
+                                OuterStroke.Color = Color3.fromRGB(150, 150, 150)
+                                OuterStroke.Thickness = 2
+                                OuterStroke.Transparency = 0.5
                                 OuterStroke.Parent = ThumbOuter
 
                                 -- Invisible hitbox
@@ -1054,7 +1012,7 @@ local function setVisible(visible)
                                         end
                                 end)
 
-                                NumberBox.TextBoxFocused:Connect(function()
+                                NumberBox.Focused:Connect(function()
                                         NumberBox.Text = NumberBox.Text:gsub("[^%d%.%-]", "")
                                 end)
 
