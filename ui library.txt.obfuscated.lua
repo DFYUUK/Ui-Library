@@ -8,13 +8,11 @@ local parentLocation = Players.LocalPlayer:WaitForChild("PlayerGui")
 
 local Library = {}
 
--- NEW LOGO ASSET
 local LOGO_ASSET = "rbxassetid://100968456165945"
 pcall(function()
         ContentProvider:PreloadAsync({LOGO_ASSET})
 end)
 
--- Helper function for smooth tweens
 local function Tween(instance, properties, duration, easingStyle, easingDirection)
         local tweenInfo = TweenInfo.new(duration or 0.3, easingStyle or Enum.EasingStyle.Quart, easingDirection or Enum.EasingDirection.Out)
         local tween = TweenService:Create(instance, tweenInfo, properties)
@@ -25,7 +23,6 @@ end
 function Library:CreateWindow(titleText)
         local Window = {}
         
-        -- Main GUI
         local ScreenGui = Instance.new("ScreenGui")
         ScreenGui.Name = "EliteGlassUI"
         ScreenGui.Parent = parentLocation
@@ -34,7 +31,6 @@ function Library:CreateWindow(titleText)
         ScreenGui.DisplayOrder = 999999999
         ScreenGui.IgnoreGuiInset = true
 
-        -- [[ AUTOFIT SCALING - PURE SCREEN SIZE ]] --
         local UIScale = Instance.new("UIScale")
         UIScale.Parent = ScreenGui
         
@@ -49,7 +45,6 @@ function Library:CreateWindow(titleText)
         updateScale()
         workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
 
-        -- [[ LOADER ]] --
         local LoaderFrame = Instance.new("Frame")
         LoaderFrame.Name = "Loader"
         LoaderFrame.Size = UDim2.new(0, 0, 0, 0)
@@ -71,7 +66,6 @@ function Library:CreateWindow(titleText)
         LoaderStroke.Transparency = 0.7
         LoaderStroke.Parent = LoaderFrame
 
-        -- Logo (rounded square)
         local Logo = Instance.new("ImageLabel")
         Logo.Name = "Logo"
         Logo.Size = UDim2.new(0, 56, 0, 56)
@@ -150,7 +144,6 @@ function Library:CreateWindow(titleText)
         Subtitle.TextTransparency = 1
         Subtitle.Parent = LoaderFrame
 
-        -- [[ MAIN WINDOW ]] --
         local MainFrame = Instance.new("Frame")
         MainFrame.Name = "MainFrame"
         MainFrame.Size = UDim2.new(0, 550, 0, 380)
@@ -174,7 +167,6 @@ function Library:CreateWindow(titleText)
         MainStroke.Transparency = 1
         MainStroke.Parent = MainFrame
 
-        -- [[ TOP BAR ]] --
         local TopBar = Instance.new("Frame")
         TopBar.Size = UDim2.new(1, 0, 0, 30)
         TopBar.BackgroundColor3 = Color3.fromRGB(0, 137, 123)
@@ -206,7 +198,6 @@ function Library:CreateWindow(titleText)
         Title.TextTransparency = 1
         Title.Parent = TopBar
         
-        -- Window State
         local isVisible = false
         local originalSize = UDim2.new(0, 550, 0, 380)
         local originalPosition = UDim2.new(0.5, 0, 0.5, 0)
@@ -235,7 +226,6 @@ function Library:CreateWindow(titleText)
                 end
         end
 
-        -- [[ MOBILE TOGGLE BUTTON WITH LOGO ]] --
         local MobileToggle = Instance.new("ImageButton")
         MobileToggle.Name = "MobileToggle"
         MobileToggle.Size = UDim2.new(0, 50, 0, 50)
@@ -263,9 +253,7 @@ function Library:CreateWindow(titleText)
                 setVisible(not isVisible)
         end)
 
-        -- [[ DRAGGING LOGIC REMOVED - GUI NOT DRAGGABLE ]] --
         
-        -- [[ KEYBIND P ]] --
         UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 if gameProcessedEvent then return end
                 if input.KeyCode == Enum.KeyCode.P then
@@ -273,7 +261,6 @@ function Library:CreateWindow(titleText)
                 end
         end)
 
-        -- [[ LOADING ANIMATION - FINISH BEFORE UI LOADS ]] --
         task.spawn(function()
                 task.wait(0.5)
                 Tween(LoaderFrame, {Size = UDim2.new(0, 260, 0, 175)})
@@ -290,7 +277,6 @@ function Library:CreateWindow(titleText)
                         task.wait(0.02)
                 end
                 task.wait(0.3)
-                -- Fade out loader completely
                 Tween(LoaderTitle, {TextTransparency = 1})
                 Tween(Subtitle, {TextTransparency = 1})
                 Tween(Percentage, {TextTransparency = 1})
@@ -304,7 +290,6 @@ function Library:CreateWindow(titleText)
                 
                 LoaderFrame:Destroy()
                 
-                -- NOW load the main UI after loader finishes
                 MainFrame.Visible = true
                 Tween(MainFrame, {BackgroundTransparency = 0.4})
                 Tween(TopBar, {BackgroundTransparency = 0.2})
@@ -316,12 +301,10 @@ function Library:CreateWindow(titleText)
                 task.wait(0.3)
                 MainFrame.ClipsDescendants = false
                 
-                -- Show mobile toggle AFTER loader finishes
                 MobileToggle.Visible = true
                 Tween(MobileToggle, {BackgroundTransparency = 0.2}, 0.3)
         end)
 
-        -- [[ TABS & CONTENT ]] --
         local TabContainer = Instance.new("Frame")
         TabContainer.Size = UDim2.new(0, 130, 1, -30)
         TabContainer.Position = UDim2.new(0, 0, 0, 30)
@@ -624,9 +607,10 @@ function Library:CreateWindow(titleText)
                                 callback = callback or function() end
                                 local value = default or min
                                 local isDragging = false
+                                local isHovering = false
                                 
                                 local SliderContainer = Instance.new("Frame")
-                                SliderContainer.Size = UDim2.new(1, 0, 0, 60)
+                                SliderContainer.Size = UDim2.new(1, 0, 0, 65)
                                 SliderContainer.BackgroundTransparency = 1
                                 SliderContainer.Parent = Inner
 
@@ -652,82 +636,163 @@ function Library:CreateWindow(titleText)
                                 Info.TextXAlignment = Enum.TextXAlignment.Left
                                 Info.Parent = SliderContainer
 
+                                local ValueContainer = Instance.new("Frame")
+                                ValueContainer.Size = UDim2.new(0, 70, 0, 20)
+                                ValueContainer.Position = UDim2.new(1, -80, 0, 2)
+                                ValueContainer.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                                ValueContainer.BackgroundTransparency = 0.3
+                                ValueContainer.BorderSizePixel = 0
+                                ValueContainer.Parent = SliderContainer
+
+                                local ValueCorner = Instance.new("UICorner")
+                                ValueCorner.CornerRadius = UDim.new(0, 4)
+                                ValueCorner.Parent = ValueContainer
+
+                                local ValueStroke = Instance.new("UIStroke")
+                                ValueStroke.Color = Color3.fromRGB(0, 137, 123)
+                                ValueStroke.Thickness = 1
+                                ValueStroke.Transparency = 0.7
+                                ValueStroke.Parent = ValueContainer
+
                                 local ValueLabel = Instance.new("TextLabel")
-                                ValueLabel.Size = UDim2.new(0, 70, 0, 14)
-                                ValueLabel.Position = UDim2.new(1, -80, 0, 3)
+                                ValueLabel.Size = UDim2.new(1, -8, 1, 0)
+                                ValueLabel.Position = UDim2.new(0, 4, 0, 0)
                                 ValueLabel.BackgroundTransparency = 1
-                                ValueLabel.Text = "[" .. tostring(math.floor(value * 100) / 100) .. "]"
+                                ValueLabel.Text = tostring(math.floor(value * 100) / 100)
                                 ValueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                                ValueLabel.Font = Enum.Font.Gotham
-                                ValueLabel.TextSize = 10
-                                ValueLabel.TextXAlignment = Enum.TextXAlignment.Right
-                                ValueLabel.Parent = SliderContainer
+                                ValueLabel.Font = Enum.Font.GothamMedium
+                                ValueLabel.TextSize = 11
+                                ValueLabel.TextXAlignment = Enum.TextXAlignment.Center
+                                ValueLabel.Parent = ValueContainer
 
-                                local SliderBar = Instance.new("Frame")
-                                SliderBar.Size = UDim2.new(1, -20, 0, 6)
-                                SliderBar.Position = UDim2.new(0, 10, 0, 42)
-                                SliderBar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                                SliderBar.BorderSizePixel = 0
-                                SliderBar.Parent = SliderContainer
+                                local SliderTrack = Instance.new("Frame")
+                                SliderTrack.Size = UDim2.new(1, -20, 0, 8)
+                                SliderTrack.Position = UDim2.new(0, 10, 0, 42)
+                                SliderTrack.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                                SliderTrack.BorderSizePixel = 0
+                                SliderTrack.Parent = SliderContainer
 
-                                local SliderBarCorner = Instance.new("UICorner")
-                                SliderBarCorner.CornerRadius = UDim.new(1, 0)
-                                SliderBarCorner.Parent = SliderBar
+                                local TrackCorner = Instance.new("UICorner")
+                                TrackCorner.CornerRadius = UDim.new(1, 0)
+                                TrackCorner.Parent = SliderTrack
+
+                                local TrackStroke = Instance.new("UIStroke")
+                                TrackStroke.Color = Color3.fromRGB(60, 60, 60)
+                                TrackStroke.Thickness = 1
+                                TrackStroke.Transparency = 0.5
+                                TrackStroke.Parent = SliderTrack
 
                                 local SliderFill = Instance.new("Frame")
                                 SliderFill.Size = UDim2.new(0, 0, 1, 0)
                                 SliderFill.BackgroundColor3 = Color3.fromRGB(0, 137, 123)
                                 SliderFill.BorderSizePixel = 0
-                                SliderFill.Parent = SliderBar
+                                SliderFill.Parent = SliderTrack
 
-                                local SliderFillCorner = Instance.new("UICorner")
-                                SliderFillCorner.CornerRadius = UDim.new(1, 0)
-                                SliderFillCorner.Parent = SliderFill
+                                local FillCorner = Instance.new("UICorner")
+                                FillCorner.CornerRadius = UDim.new(1, 0)
+                                FillCorner.Parent = SliderFill
+
+                                local SliderHandle = Instance.new("Frame")
+                                SliderHandle.Size = UDim2.new(0, 18, 0, 18)
+                                SliderHandle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                                SliderHandle.BorderSizePixel = 0
+                                SliderHandle.Parent = SliderTrack
+
+                                local HandleCorner = Instance.new("UICorner")
+                                HandleCorner.CornerRadius = UDim.new(1, 0)
+                                HandleCorner.Parent = SliderHandle
+
+                                local HandleStroke = Instance.new("UIStroke")
+                                HandleStroke.Color = Color3.fromRGB(0, 137, 123)
+                                HandleStroke.Thickness = 2
+                                HandleStroke.Transparency = 0.3
+                                HandleStroke.Parent = SliderHandle
 
                                 local SliderButton = Instance.new("TextButton")
-                                SliderButton.Size = UDim2.new(1, -20, 0, 16)
-                                SliderButton.Position = UDim2.new(0, 10, 0, 37)
+                                SliderButton.Size = UDim2.new(1, -20, 0, 24)
+                                SliderButton.Position = UDim2.new(0, 10, 0, 34)
                                 SliderButton.BackgroundTransparency = 1
                                 SliderButton.Text = ""
                                 SliderButton.Parent = SliderContainer
 
-                                local function updateSlider()
+                                local function updateSlider(animate)
                                         local percentage = (value - min) / (max - min)
-                                        SliderFill.Size = UDim2.new(percentage, 0, 1, 0)
-                                        ValueLabel.Text = "[" .. tostring(math.floor(value * 100) / 100) .. "]"
+                                        local fillWidth = percentage * SliderTrack.AbsoluteSize.X
+                                        local handlePosition = math.max(0, math.min(fillWidth - 9, SliderTrack.AbsoluteSize.X - 18))
+                                        
+                                        if animate then
+                                                Tween(SliderFill, {Size = UDim2.new(percentage, 0, 1, 0)}, 0.15)
+                                                Tween(SliderHandle, {Position = UDim2.new(0, handlePosition, 0.5, -9)}, 0.15)
+                                        else
+                                                SliderFill.Size = UDim2.new(percentage, 0, 1, 0)
+                                                SliderHandle.Position = UDim2.new(0, handlePosition, 0.5, -9)
+                                        end
+                                        
+                                        ValueLabel.Text = tostring(math.floor(value * 100) / 100)
+                                        
+                                        if isDragging then
+                                                Tween(SliderHandle, {BackgroundColor3 = Color3.fromRGB(0, 137, 123)}, 0.1)
+                                                Tween(HandleStroke, {Transparency = 0}, 0.1)
+                                        elseif isHovering then
+                                                Tween(SliderHandle, {BackgroundColor3 = Color3.fromRGB(240, 240, 240)}, 0.1)
+                                                Tween(HandleStroke, {Transparency = 0.2}, 0.1)
+                                        else
+                                                Tween(SliderHandle, {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}, 0.1)
+                                                Tween(HandleStroke, {Transparency = 0.3}, 0.1)
+                                        end
+                                        
                                         callback(value)
                                 end
 
                                 SliderButton.MouseButton1Down:Connect(function()
                                         isDragging = true
+                                        updateSlider(false)
+                                end)
+
+                                SliderButton.MouseEnter:Connect(function()
+                                        isHovering = true
+                                        if not isDragging then
+                                                Tween(SliderTrack, {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}, 0.2)
+                                                updateSlider(false)
+                                        end
+                                end)
+
+                                SliderButton.MouseLeave:Connect(function()
+                                        isHovering = false
+                                        if not isDragging then
+                                                Tween(SliderTrack, {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}, 0.2)
+                                                updateSlider(false)
+                                        end
                                 end)
 
                                 UserInputService.InputChanged:Connect(function(input)
                                         if isDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                                                 local mousePos = input.Position
-                                                local sliderPos = SliderBar.AbsolutePosition
-                                                local sliderSize = SliderBar.AbsoluteSize
+                                                local sliderPos = SliderTrack.AbsolutePosition
+                                                local sliderSize = SliderTrack.AbsoluteSize
                                                 local percentage = math.clamp((mousePos.X - sliderPos.X) / sliderSize.X, 0, 1)
                                                 value = min + (max - min) * percentage
-                                                updateSlider()
+                                                updateSlider(false)
                                         end
                                 end)
 
                                 UserInputService.InputEnded:Connect(function(input)
-                                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                                        if input.UserInputType == Enum.UserInputType.MouseButton1 and isDragging then
                                                 isDragging = false
+                                                updateSlider(true)
                                         end
                                 end)
 
-                                updateSlider()
+                                updateSlider(false)
                         end
 
                         function SectionObj:NewNumberBox(boxText, boxInfo, default, callback)
                                 callback = callback or function() end
                                 local value = default or 0
+                                local isFocused = false
                                 
                                 local NumberBoxContainer = Instance.new("Frame")
-                                NumberBoxContainer.Size = UDim2.new(1, 0, 0, 45)
+                                NumberBoxContainer.Size = UDim2.new(1, 0, 0, 50)
                                 NumberBoxContainer.BackgroundTransparency = 1
                                 NumberBoxContainer.Parent = Inner
 
@@ -737,7 +802,7 @@ function Library:CreateWindow(titleText)
                                 Title.BackgroundTransparency = 1
                                 Title.Text = boxText
                                 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-                                Title.Font = Enum.Font.GothamSemibold
+                                Title.Font = Enum.Font.GothamMedium
                                 Title.TextSize = 13
                                 Title.TextXAlignment = Enum.TextXAlignment.Left
                                 Title.Parent = NumberBoxContainer
@@ -753,26 +818,46 @@ function Library:CreateWindow(titleText)
                                 Info.TextXAlignment = Enum.TextXAlignment.Left
                                 Info.Parent = NumberBoxContainer
 
-                                -- Square number box with dark background
                                 local InputFrame = Instance.new("Frame")
-                                InputFrame.Size = UDim2.new(0, 120, 0, 28)
-                                InputFrame.Position = UDim2.new(1, -130, 0.5, -14)
-                                InputFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-                                InputFrame.BackgroundTransparency = 0.5
+                                InputFrame.Size = UDim2.new(0, 125, 0, 32)
+                                InputFrame.Position = UDim2.new(1, -135, 0.5, -16)
+                                InputFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                                InputFrame.BackgroundTransparency = 0.2
                                 InputFrame.BorderSizePixel = 0
                                 InputFrame.Parent = NumberBoxContainer
 
+                                local InputCorner = Instance.new("UICorner")
+                                InputCorner.CornerRadius = UDim.new(0, 6)
+                                InputCorner.Parent = InputFrame
+
+                                local InputStroke = Instance.new("UIStroke")
+                                InputStroke.Color = Color3.fromRGB(60, 60, 60)
+                                InputStroke.Thickness = 1
+                                InputStroke.Transparency = 0.5
+                                InputStroke.Parent = InputFrame
+
+                                local StatusIndicator = Instance.new("Frame")
+                                StatusIndicator.Size = UDim2.new(0, 4, 1, 0)
+                                StatusIndicator.Position = UDim2.new(1, -4, 0, 0)
+                                StatusIndicator.BackgroundColor3 = Color3.fromRGB(0, 137, 123)
+                                StatusIndicator.BorderSizePixel = 0
+                                StatusIndicator.Parent = InputFrame
+
+                                local StatusCorner = Instance.new("UICorner")
+                                StatusCorner.CornerRadius = UDim.new(0, 2)
+                                StatusCorner.Parent = StatusIndicator
+
                                 local NumberBox = Instance.new("TextBox")
-                                NumberBox.Size = UDim2.new(1, -8, 1, -4)
-                                NumberBox.Position = UDim2.new(0, 4, 0, 2)
+                                NumberBox.Size = UDim2.new(1, -12, 1, -6)
+                                NumberBox.Position = UDim2.new(0, 6, 0, 3)
                                 NumberBox.BackgroundTransparency = 1
                                 NumberBox.BorderSizePixel = 0
                                 NumberBox.Text = tostring(value)
                                 NumberBox.TextColor3 = Color3.fromRGB(255, 255, 255)
                                 NumberBox.Font = Enum.Font.GothamMedium
                                 NumberBox.TextSize = 12
-                                NumberBox.PlaceholderText = "0"
-                                NumberBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
+                                NumberBox.PlaceholderText = "Enter value"
+                                NumberBox.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
                                 NumberBox.TextTruncate = Enum.TextTruncate.AtEnd
                                 NumberBox.ClipsDescendants = true
                                 NumberBox.Parent = InputFrame
@@ -787,46 +872,81 @@ function Library:CreateWindow(titleText)
                                         end
                                 end
 
+                                local function updateVisualState(isValid)
+                                        if isFocused then
+                                                if isValid then
+                                                        Tween(InputFrame, {BackgroundColor3 = Color3.fromRGB(30, 40, 45)}, 0.2)
+                                                        Tween(InputStroke, {Color = Color3.fromRGB(0, 137, 123), Transparency = 0.2}, 0.2)
+                                                        Tween(StatusIndicator, {BackgroundColor3 = Color3.fromRGB(0, 137, 123)}, 0.2)
+                                                else
+                                                        Tween(InputFrame, {BackgroundColor3 = Color3.fromRGB(45, 30, 30)}, 0.2)
+                                                        Tween(InputStroke, {Color = Color3.fromRGB(220, 80, 80), Transparency = 0.3}, 0.2)
+                                                        Tween(StatusIndicator, {BackgroundColor3 = Color3.fromRGB(220, 80, 80)}, 0.2)
+                                                end
+                                        else
+                                                if isValid then
+                                                        Tween(InputFrame, {BackgroundColor3 = Color3.fromRGB(25, 25, 25), BackgroundTransparency = 0.2}, 0.2)
+                                                        Tween(InputStroke, {Color = Color3.fromRGB(60, 60, 60), Transparency = 0.5}, 0.2)
+                                                        Tween(StatusIndicator, {BackgroundColor3 = Color3.fromRGB(0, 137, 123)}, 0.2)
+                                                else
+                                                        Tween(InputFrame, {BackgroundColor3 = Color3.fromRGB(35, 25, 25), BackgroundTransparency = 0.2}, 0.2)
+                                                        Tween(InputStroke, {Color = Color3.fromRGB(180, 60, 60), Transparency = 0.4}, 0.2)
+                                                        Tween(StatusIndicator, {BackgroundColor3 = Color3.fromRGB(180, 60, 60)}, 0.2)
+                                                end
+                                        end
+                                end
+
                                 local function updateValue()
                                         local numValue = tonumber(NumberBox.Text)
                                         if numValue then
                                                 value = numValue
                                                 callback(value)
-                                                InputFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+                                                updateVisualState(true)
                                                 
-                                                -- Format display if number is too long
-                                                if #NumberBox.Text > 8 then
+                                                if not isFocused and #NumberBox.Text > 8 then
                                                         NumberBox.Text = formatNumber(numValue)
                                                 end
                                         else
-                                                InputFrame.BackgroundColor3 = Color3.fromRGB(40, 20, 20)
+                                                updateVisualState(false)
                                         end
                                 end
 
+                                NumberBox.Focused:Connect(function()
+                                        isFocused = true
+                                        NumberBox.Text = tostring(value)
+                                        Tween(InputFrame, {BackgroundTransparency = 0}, 0.15)
+                                        updateVisualState(tonumber(NumberBox.Text) ~= nil)
+                                end)
+
                                 NumberBox.FocusLost:Connect(function(enterPressed)
+                                        isFocused = false
+                                        Tween(InputFrame, {BackgroundTransparency = 0.2}, 0.15)
                                         updateValue()
                                 end)
 
                                 NumberBox.MouseEnter:Connect(function()
-                                        InputFrame.BackgroundTransparency = 0.3
-                                        Tween(InputFrame, {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}, 0.2)
+                                        if not isFocused then
+                                                Tween(InputFrame, {BackgroundTransparency = 0}, 0.2)
+                                                Tween(InputStroke, {Transparency = 0.3}, 0.2)
+                                        end
                                 end)
 
                                 NumberBox.MouseLeave:Connect(function()
-                                        if tonumber(NumberBox.Text) then
-                                                InputFrame.BackgroundTransparency = 0.5
-                                                Tween(InputFrame, {BackgroundColor3 = Color3.fromRGB(20, 20, 20)}, 0.2)
+                                        if not isFocused then
+                                                Tween(InputFrame, {BackgroundTransparency = 0.2}, 0.2)
+                                                updateVisualState(tonumber(NumberBox.Text) ~= nil)
                                         end
                                 end)
 
-                                NumberBox.Focused:Connect(function()
-                                        InputFrame.BackgroundTransparency = 0.4
+                                NumberBox.Changed:Connect(function(property)
+                                        if property == "Text" and isFocused then
+                                                local isValid = tonumber(NumberBox.Text) ~= nil or NumberBox.Text == "" or NumberBox.Text == "-"
+                                                updateVisualState(isValid)
+                                        end
                                 end)
 
-                                NumberBox.FocusLost:Connect(function()
-                                        if not tonumber(NumberBox.Text) then
-                                                InputFrame.BackgroundColor3 = Color3.fromRGB(40, 20, 20)
-                                        end
+                                NumberBox.TextBoxFocused:Connect(function()
+                                        NumberBox.Text = NumberBox.Text:gsub("[^%d%.%-]", "")
                                 end)
 
                                 updateValue()
