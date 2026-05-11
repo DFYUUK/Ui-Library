@@ -690,10 +690,10 @@ local function setVisible(visible)
                                 FillCorner.CornerRadius = UDim.new(1, 0)
                                 FillCorner.Parent = SliderFill
 
-                                -- Modern thumb matching image style
+                                -- Modern thumb matching original design
                                 local SliderThumb = Instance.new("Frame")
-                                SliderThumb.Size = UDim2.new(0, 14, 0, 14)
-                                SliderThumb.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+                                SliderThumb.Size = UDim2.new(0, 18, 0, 18)
+                                SliderThumb.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                                 SliderThumb.BorderSizePixel = 0
                                 SliderThumb.Parent = SliderTrack
 
@@ -701,24 +701,23 @@ local function setVisible(visible)
                                 ThumbCorner.CornerRadius = UDim.new(1, 0)
                                 ThumbCorner.Parent = SliderThumb
 
-                                -- White outer ring with better rendering
-                                local ThumbOuter = Instance.new("Frame")
-                                ThumbOuter.Size = UDim2.new(0, 18, 0, 18)
-                                ThumbOuter.Position = UDim2.new(0.5, -9, 0.5, -9)
-                                ThumbOuter.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                                ThumbOuter.BackgroundTransparency = 0
-                                ThumbOuter.BorderSizePixel = 0
-                                ThumbOuter.Parent = SliderTrack
+                                -- Inner shadow for depth
+                                local ThumbShadow = Instance.new("Frame")
+                                ThumbShadow.Size = UDim2.new(0, 16, 0, 16)
+                                ThumbShadow.Position = UDim2.new(0.5, -8, 0.5, -8)
+                                ThumbShadow.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+                                ThumbShadow.BorderSizePixel = 0
+                                ThumbShadow.Parent = SliderThumb
 
-                                local OuterCorner = Instance.new("UICorner")
-                                OuterCorner.CornerRadius = UDim.new(1, 0)
-                                OuterCorner.Parent = ThumbOuter
+                                local ShadowCorner = Instance.new("UICorner")
+                                ShadowCorner.CornerRadius = UDim.new(1, 0)
+                                ShadowCorner.Parent = ThumbShadow
 
-                                local OuterStroke = Instance.new("UIStroke")
-                                OuterStroke.Color = Color3.fromRGB(150, 150, 150)
-                                OuterStroke.Thickness = 2
-                                OuterStroke.Transparency = 0.5
-                                OuterStroke.Parent = ThumbOuter
+                                local ThumbStroke = Instance.new("UIStroke")
+                                ThumbStroke.Color = Color3.fromRGB(0, 137, 123)
+                                ThumbStroke.Thickness = 2
+                                ThumbStroke.Transparency = 0.3
+                                ThumbStroke.Parent = SliderThumb
 
                                 -- Invisible hitbox
                                 local SliderButton = Instance.new("TextButton")
